@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/employee_model.dart';
 import '../services/api_services.dart';
@@ -26,35 +26,37 @@ class EmployeeProvider extends ChangeNotifier {
     _employees = [];
     try {
       _response = await ApiService.getEmployees();
-      _response.forEach((element) {
+      for (var element in _response) {
         _employees.add(element);
-      });
+      }
       setIsGettingDataFalse();
       isData = true;
       notifyListeners();
     } catch (e) {
       setIsGettingDataFalse();
       notifyListeners();
-      print('Error fetching employees: $e');
+      if (kDebugMode) {
+        print('Error fetching employees: $e');
+      }
       // Handle error
     }
   }
 
   void getFiltered(String name) {
     _employees = [];
-    _response.forEach((element) {
-      if(element.age > 35 && element.contact.contains('74') && element.name.trim().toLowerCase().contains(name)){
+    for (var element in _response) {
+      if(element.age > 35 && element.contact.contains('74') || element.name.trim().toLowerCase().contains(name)){
         _employees.add(element);
       }
-    });
+    }
     notifyListeners();
   }
 
   void getUnfiltered() {
     _employees = [];
-    _response.forEach((element) {
+    for (var element in _response) {
       _employees.add(element);
-    });
+    }
     notifyListeners();
   }
 }
